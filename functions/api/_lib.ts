@@ -1,6 +1,8 @@
 // Shared types for Cloudflare Pages Functions
 export interface Env {
   DB: D1Database;
+  RESEND_API_KEY: string;
+  ADMIN_EMAIL: string;
 }
 
 export type CFContext = EventContext<Env, string, unknown>;

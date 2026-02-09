@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { clearToken } from '../lib/api';
 import { useLang } from '../lib/LangContext';
 import { useState } from 'react';
+import NotificationBell from './NotificationBell';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     { to: '/services', label: t('nav_services'), icon: '⚙️' },
     { to: '/subscriptions', label: t('nav_subscriptions'), icon: '📋' },
     { to: '/renewals', label: t('nav_renewals'), icon: '🔄' },
+    { to: '/reports', label: t('nav_reports'), icon: '📊' },
     { to: '/settings', label: t('nav_settings'), icon: '🛠️' },
   ];
 
@@ -80,6 +82,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </svg>
           </button>
           <div className="flex-1" />
+          <NotificationBell />
           <span className="text-sm text-gray-500">{t('admin')}</span>
         </header>
         <main className="flex-1 p-4 lg:p-8 overflow-auto">{children}</main>

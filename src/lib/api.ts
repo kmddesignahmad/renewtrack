@@ -107,4 +107,12 @@ export const api = {
     }),
   getNotice: (uuid: string) =>
     request<any>(`/notices/${uuid}`),
+
+  // Notifications
+  getNotifications: () => request<{ notifications: any[]; stored: any[]; unread_count: number }>('/notifications'),
+  sendEmailDigest: () => request('/notifications/email', { method: 'POST' }),
+
+  // Reports
+  getReports: (password: string) =>
+    request<any>('/reports', { method: 'POST', body: JSON.stringify({ password }) }),
 };

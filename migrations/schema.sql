@@ -62,6 +62,14 @@ CREATE TABLE IF NOT EXISTS renewal_notices (
   end_date TEXT NOT NULL,
   price REAL DEFAULT 0,
   currency TEXT DEFAULT 'JOD',
-  created_at TEXT DEFAULT (datetime('now')),
   FOREIGN KEY (subscription_id) REFERENCES subscriptions(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id TEXT PRIMARY KEY,
+  type TEXT DEFAULT 'info',
+  title TEXT NOT NULL,
+  message TEXT DEFAULT '',
+  is_read INTEGER DEFAULT 0,
+  created_at TEXT DEFAULT (datetime('now'))
 );

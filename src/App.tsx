@@ -10,6 +10,7 @@ import ServicesPage from './pages/ServicesPage';
 import SubscriptionsPage from './pages/SubscriptionsPage';
 import RenewalsPage from './pages/RenewalsPage';
 import SettingsPage from './pages/SettingsPage';
+import ReportsPage from './pages/ReportsPage';
 import NoticePage from './pages/NoticePage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -41,6 +42,7 @@ export default function App() {
                     <Route path="/services" element={<ServicesPage />} />
                     <Route path="/subscriptions" element={<SubscriptionsPage />} />
                     <Route path="/renewals" element={<RenewalsPage />} />
+                    <Route path="/reports" element={<ReportsPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
                   </Routes>
                 </Layout>
