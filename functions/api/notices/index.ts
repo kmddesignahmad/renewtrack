@@ -1,5 +1,5 @@
-import { json, error, requireAuth, generateUUID } from '../../lib';
-import type { Env } from '../../lib';
+import { json, error, requireAuth, generateUUID } from '../_lib';
+import type { Env } from '../_lib';
 
 // GET /api/notices - List all notices
 export const onRequestGet: PagesFunction<Env> = async (context) => {

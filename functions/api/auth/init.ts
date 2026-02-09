@@ -1,5 +1,5 @@
-import { json, error, hashPassword } from '../../lib';
-import type { Env } from '../../lib';
+import { json, error, hashPassword } from '../_lib';
+import type { Env } from '../_lib';
 
 // POST /api/auth/init - Create admin user if not exists
 export const onRequestPost: PagesFunction<Env> = async (context) => {

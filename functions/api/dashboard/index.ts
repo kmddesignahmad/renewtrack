@@ -1,5 +1,5 @@
-import { json, error, requireAuth, getToday } from '../../lib';
-import type { Env } from '../../lib';
+import { json, error, requireAuth, getToday } from '../_lib';
+import type { Env } from '../_lib';
 
 // GET /api/dashboard
 export const onRequestGet: PagesFunction<Env> = async (context) => {

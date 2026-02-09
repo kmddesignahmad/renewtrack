@@ -1,5 +1,5 @@
-import { json, error, hashPassword, createToken } from '../../lib';
-import type { Env } from '../../lib';
+import { json, error, hashPassword, createToken } from '../_lib';
+import type { Env } from '../_lib';
 
 // POST /api/auth/login
 export const onRequestPost: PagesFunction<Env> = async (context) => {

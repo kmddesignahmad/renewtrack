@@ -1,4 +1,4 @@
-import type { Env } from '../../lib';
+import type { Env } from '../_lib';
 
 // GET /api/notices/:uuid - Public endpoint (no auth)
 export const onRequestGet: PagesFunction<Env, 'uuid'> = async (context) => {
