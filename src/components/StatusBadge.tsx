@@ -1,4 +1,8 @@
+import { useLang } from '../lib/LangContext';
+
 export default function StatusBadge({ status }: { status: string }) {
+  const { t } = useLang();
+
   const classes: Record<string, string> = {
     active: 'badge-active',
     due_soon: 'badge-due',
@@ -7,10 +11,10 @@ export default function StatusBadge({ status }: { status: string }) {
   };
 
   const labels: Record<string, string> = {
-    active: 'Active',
-    due_soon: 'Due Soon',
-    expired: 'Expired',
-    review: 'Review',
+    active: t('status_active'),
+    due_soon: t('status_due_soon'),
+    expired: t('status_expired'),
+    review: t('status_review'),
   };
 
   return (

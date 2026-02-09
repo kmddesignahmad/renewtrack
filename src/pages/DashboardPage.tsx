@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
+import { useLang } from '../lib/LangContext';
 
 export default function DashboardPage() {
+  const { t } = useLang();
+  const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -9,23 +13,27 @@ export default function DashboardPage() {
     api.getDashboard().then(setData).catch(console.error).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-12 text-gray-400">Loading...</div>;
-  if (!data) return <div className="text-center py-12 text-red-400">Failed to load dashboard</div>;
+  if (loading) return <div className="text-center py-12 text-gray-400">{t('loading')}</div>;
+  if (!data) return <div className="text-center py-12 text-red-400">Failed to load</div>;
 
   const cards = [
-    { label: 'Total Customers', value: data.total_customers, color: 'bg-brand-500', icon: '👥' },
-    { label: 'Active Subscriptions', value: data.active_subscriptions, color: 'bg-emerald-500', icon: '✅' },
-    { label: 'Due Soon (30 days)', value: data.due_soon, color: 'bg-amber-500', icon: '⏰' },
-    { label: 'Expired', value: data.expired, color: 'bg-red-500', icon: '❌' },
+    { label: t('total_customers'), value: data.total_customers, color: 'bg-brand-500', icon: '👥', onClick: () => navigate('/customers') },
+    { label: t('active_subscriptions'), value: data.active_subscriptions, color: 'bg-emerald-500', icon: '✅', onClick: () => navigate('/subscriptions?status=active') },
+    { label: t('due_soon'), value: data.due_soon, color: 'bg-amber-500', icon: '⏰', onClick: () => navigate('/subscriptions?status=due_soon') },
+    { label: t('expired'), value: data.expired, color: 'bg-red-500', icon: '❌', onClick: () => navigate('/subscriptions?status=expired') },
   ];
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('dashboard_title')}</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {cards.map((c) => (
-          <div key={c.label} className="card p-5">
+          <div
+            key={c.label}
+            onClick={c.onClick}
+            className="card p-5 cursor-pointer hover:shadow-md hover:border-brand-300 transition-all duration-150 active:scale-[0.98]"
+          >
             <div className="flex items-center gap-3 mb-3">
               <div className={`w-10 h-10 ${c.color} rounded-lg flex items-center justify-center text-white text-lg`}>
                 {c.icon}
@@ -39,10 +47,10 @@ export default function DashboardPage() {
 
       <div className="card">
         <div className="px-5 py-4 border-b border-gray-100">
-          <h2 className="font-semibold text-gray-900">Recent Renewals</h2>
+          <h2 className="font-semibold text-gray-900">{t('recent_renewals')}</h2>
         </div>
         {data.recent_renewals.length === 0 ? (
-          <div className="px-5 py-8 text-center text-gray-400 text-sm">No recent renewals</div>
+          <div className="px-5 py-8 text-center text-gray-400 text-sm">{t('no_recent_renewals')}</div>
         ) : (
           <div className="divide-y divide-gray-50">
             {data.recent_renewals.map((r: any) => (

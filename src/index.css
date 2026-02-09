@@ -50,6 +50,11 @@
   }
 }
 
+/* RTL adjustments */
+[dir="rtl"] {
+  font-family: 'IBM Plex Sans', 'Segoe UI', Tahoma, sans-serif;
+}
+
 /* Print styles for notice */
 @media print {
   body { background: white !important; }

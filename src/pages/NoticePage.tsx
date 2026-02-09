@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
+const LOGO_URL = 'https://dcv.jo/wp-content/uploads/2024/12/logo-Digital-Creative-for-Information-Technology-02.png';
+
 export default function NoticePage() {
   const { uuid } = useParams<{ uuid: string }>();
   const [notice, setNotice] = useState<any>(null);
@@ -10,22 +12,13 @@ export default function NoticePage() {
   useEffect(() => {
     if (!uuid) return;
     fetch(`/api/notices/${uuid}`)
-      .then((r) => {
-        if (!r.ok) throw new Error('Not found');
-        return r.json();
-      })
+      .then((r) => { if (!r.ok) throw new Error('Not found'); return r.json(); })
       .then(setNotice)
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
   }, [uuid]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="text-gray-400">Loading...</div>
-      </div>
-    );
-  }
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-100"><div className="text-gray-400">Loading...</div></div>;
 
   if (notFound || !notice) {
     return (
@@ -42,26 +35,24 @@ export default function NoticePage() {
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-2xl mx-auto">
-        {/* Print button */}
         <div className="no-print mb-4 text-right">
-          <button
-            onClick={() => window.print()}
-            className="btn-primary"
-          >
-            🖨️ Print Notice
-          </button>
+          <button onClick={() => window.print()} className="btn-primary">🖨️ Print Notice</button>
         </div>
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          {/* Header */}
+          {/* Header with logo */}
           <div className="bg-gradient-to-r from-brand-800 to-brand-600 px-8 py-6">
             <div className="flex items-center gap-4">
-              <img
-                src="https://dcv.jo/wp-content/uploads/2024/12/logo-Digital-Creative-for-Information-Technology-02.png"
-                alt="DCV Logo"
-                className="h-14 w-auto bg-white rounded-lg p-1"
-                crossOrigin="anonymous"
-              />
+              <div className="bg-white rounded-lg p-2 flex items-center justify-center" style={{ minWidth: 60, minHeight: 60 }}>
+                <img
+                  src={LOGO_URL}
+                  alt="DCV Logo"
+                  className="h-12 w-auto"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
+                />
+              </div>
               <div className="text-white">
                 <h1 className="text-xl font-bold">Digital Creative Vision</h1>
                 <p className="text-brand-200 text-sm">For Information Technology</p>
@@ -79,13 +70,11 @@ export default function NoticePage() {
 
           {/* Body */}
           <div className="px-8 py-6 space-y-6">
-            {/* Customer */}
             <div>
-              <h3 className="text-xs font-semibold uppercase text-gray-400 mb-2 tracking-wider">Customer</h3>
+              <h3 className="text-xs font-semibold uppercase text-gray-400 mb-2 tracking-wider">CUSTOMER</h3>
               <p className="text-lg font-semibold text-gray-900">{notice.customer_name}</p>
             </div>
 
-            {/* Details table */}
             <div className="border border-gray-200 rounded-lg overflow-hidden">
               <table className="w-full text-sm">
                 <tbody>
@@ -109,7 +98,6 @@ export default function NoticePage() {
               </table>
             </div>
 
-            {/* Note */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm text-amber-800">
               This is a renewal notice for the above service. Please ensure payment is made before the renewal date to avoid service interruption.
             </div>
