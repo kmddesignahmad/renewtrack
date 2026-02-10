@@ -112,7 +112,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'RenewTrack <notifications@resend.dev>',
+        from: 'RenewTrack <notify@dcv.jo>',
         to: [ADMIN_EMAIL],
         subject: `🔔 RenewTrack Alert: ${expired.length} expired, ${dueSoon.length} due soon`,
         html: html,
