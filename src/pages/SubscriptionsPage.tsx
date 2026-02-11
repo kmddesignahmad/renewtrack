@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { api } from '../lib/api';
 import { useLang } from '../lib/LangContext';
 import Modal from '../components/Modal';
+import SearchableSelect from '../components/SearchableSelect';
 import StatusBadge from '../components/StatusBadge';
 import type { TranslationKey } from '../lib/i18n';
 
@@ -201,10 +202,14 @@ export default function SubscriptionsPage() {
               </div>
             ) : (
               <div className="flex gap-2">
-                <select className="input" value={form.customer_id} onChange={(e) => setForm({ ...form, customer_id: e.target.value })}>
-                  <option value="">{t('select_customer')}</option>
-                  {customers.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
+                <div className="flex-1">
+                  <SearchableSelect
+                    options={customers.map((c) => ({ value: c.id, label: c.name }))}
+                    value={form.customer_id}
+                    onChange={(val) => setForm({ ...form, customer_id: val })}
+                    placeholder={t('select_customer')}
+                  />
+                </div>
                 <button className="btn-secondary btn-sm whitespace-nowrap" onClick={() => setShowNewCustomer(true)}>{t('new_btn')}</button>
               </div>
             )}

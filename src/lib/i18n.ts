@@ -3,7 +3,7 @@ export type Lang = 'en' | 'ar';
 export const translations = {
   en: {
     // General
-    app_name: 'RenewTrack',
+    app_name: 'RenewDCV',
     app_subtitle: 'Subscription & Renewal Manager',
     admin: 'Admin',
     logout: 'Logout',
@@ -64,6 +64,13 @@ export const translations = {
     delete_customer_confirm: 'Delete this customer and all their subscriptions?',
     name_required: 'Name is required',
     no_customers: 'No customers found',
+    trash: 'Trash',
+    trash_info: 'Deleted customers are kept for 30 days before permanent removal.',
+    trash_empty: 'Trash is empty',
+    restore: 'Restore',
+    delete_forever: 'Delete Forever',
+    permanent_delete_confirm: 'Permanently delete this customer? This cannot be undone!',
+    deleted_at: 'Deleted At',
 
     // Services
     services_title: 'Service Types',
@@ -201,7 +208,7 @@ export const translations = {
 
   ar: {
     // General
-    app_name: 'RenewTrack',
+    app_name: 'RenewDCV',
     app_subtitle: 'نظام إدارة الاشتراكات والتجديدات',
     admin: 'مدير',
     logout: 'تسجيل خروج',
@@ -262,6 +269,13 @@ export const translations = {
     delete_customer_confirm: 'حذف هذا العميل وجميع اشتراكاته؟',
     name_required: 'الاسم مطلوب',
     no_customers: 'لا يوجد عملاء',
+    trash: 'سلة المهملات',
+    trash_info: 'العملاء المحذوفون يبقون 30 يوم قبل الحذف النهائي.',
+    trash_empty: 'سلة المهملات فارغة',
+    restore: 'استرجاع',
+    delete_forever: 'حذف نهائي',
+    permanent_delete_confirm: 'حذف هذا العميل نهائياً؟ لا يمكن التراجع!',
+    deleted_at: 'تاريخ الحذف',
 
     // Services
     services_title: 'أنواع الخدمات',

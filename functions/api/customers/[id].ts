@@ -33,7 +33,15 @@ export const onRequestPut: PagesFunction<Env, 'id'> = async (context) => {
       phone_secondary?: string;
       email?: string;
       notes?: string;
+      action?: string;
     };
+
+    // Restore from trash
+    if (body.action === 'restore') {
+      await db.prepare(`UPDATE customers SET deleted_at = NULL, updated_at = datetime('now') WHERE id = ?`).bind(id).run();
+      const customer = await db.prepare('SELECT * FROM customers WHERE id = ?').bind(id).first();
+      return json(customer);
+    }
 
     if (!body.name || !body.name.trim()) {
       return error('Customer name is required');
@@ -54,18 +62,26 @@ export const onRequestPut: PagesFunction<Env, 'id'> = async (context) => {
   }
 };
 
-// DELETE /api/customers/:id
+// DELETE /api/customers/:id?permanent=1 for permanent delete
 export const onRequestDelete: PagesFunction<Env, 'id'> = async (context) => {
   const auth = requireAuth(context.request);
   if (!auth.valid) return error('Unauthorized', 401);
 
   const db = context.env.DB;
   const id = context.params.id;
+  const url = new URL(context.request.url);
+  const permanent = url.searchParams.get('permanent') === '1';
 
   try {
-    // Cascading delete will remove subscriptions too
-    await db.prepare('DELETE FROM customers WHERE id = ?').bind(id).run();
-    return json({ message: 'Customer deleted' });
+    if (permanent) {
+      // Permanent delete - cascading will remove subscriptions
+      await db.prepare('DELETE FROM customers WHERE id = ?').bind(id).run();
+      return json({ message: 'Customer permanently deleted' });
+    } else {
+      // Soft delete - move to trash
+      await db.prepare(`UPDATE customers SET deleted_at = datetime('now'), updated_at = datetime('now') WHERE id = ?`).bind(id).run();
+      return json({ message: 'Customer moved to trash' });
+    }
   } catch (e: any) {
     return error('Failed to delete customer: ' + e.message, 500);
   }

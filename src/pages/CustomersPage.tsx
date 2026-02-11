@@ -3,12 +3,13 @@ import { api } from '../lib/api';
 import { useLang } from '../lib/LangContext';
 import Modal from '../components/Modal';
 
-interface Customer { id: number; name: string; phone_primary: string; phone_secondary: string; email: string; notes: string; }
+interface Customer { id: number; name: string; phone_primary: string; phone_secondary: string; email: string; notes: string; deleted_at?: string; }
 const empty = { name: '', phone_primary: '', phone_secondary: '', email: '', notes: '' };
 
 export default function CustomersPage() {
   const { t } = useLang();
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [trashCustomers, setTrashCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Customer | null>(null);
@@ -16,9 +17,17 @@ export default function CustomersPage() {
   const [search, setSearch] = useState('');
   const [err, setErr] = useState('');
   const [saving, setSaving] = useState(false);
+  const [showTrash, setShowTrash] = useState(false);
 
-  const load = () => { api.getCustomers().then(setCustomers).catch(console.error).finally(() => setLoading(false)); };
-  useEffect(load, []);
+  const load = async () => {
+    try {
+      const [c, tr] = await Promise.all([api.getCustomers(), api.getTrashCustomers()]);
+      setCustomers(c); setTrashCustomers(tr);
+    } catch (ex) { console.error(ex); }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { load(); }, []);
 
   const openNew = () => { setEditing(null); setForm(empty); setErr(''); setModalOpen(true); };
   const openEdit = (c: Customer) => { setEditing(c); setForm(c); setErr(''); setModalOpen(true); };
@@ -39,7 +48,16 @@ export default function CustomersPage() {
     try { await api.deleteCustomer(id); load(); } catch (ex: any) { alert(ex.message); }
   };
 
-  const filtered = customers.filter((c) =>
+  const handleRestore = async (id: number) => {
+    try { await api.restoreCustomer(id); load(); } catch (ex: any) { alert(ex.message); }
+  };
+
+  const handlePermanentDelete = async (id: number) => {
+    if (!confirm(t('permanent_delete_confirm'))) return;
+    try { await api.permanentDeleteCustomer(id); load(); } catch (ex: any) { alert(ex.message); }
+  };
+
+  const filtered = (showTrash ? trashCustomers : customers).filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase()) ||
     c.email?.toLowerCase().includes(search.toLowerCase()) ||
     c.phone_primary?.includes(search)
@@ -49,15 +67,33 @@ export default function CustomersPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold text-gray-900">{t('customers_title')}</h1>
-        <button className="btn-primary" onClick={openNew}>{t('add_customer')}</button>
+        <div className="flex gap-2">
+          <button
+            className={`btn-secondary btn-sm ${showTrash ? 'bg-red-50 text-red-600 border-red-200' : ''}`}
+            onClick={() => setShowTrash(!showTrash)}
+          >
+            🗑️ {t('trash')} {trashCustomers.length > 0 && `(${trashCustomers.length})`}
+          </button>
+          {!showTrash && <button className="btn-primary" onClick={openNew}>{t('add_customer')}</button>}
+        </div>
       </div>
+
       <div className="mb-4">
         <input className="input max-w-sm" placeholder={t('search_customers')} value={search} onChange={(e) => setSearch(e.target.value)} />
       </div>
+
+      {showTrash && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm text-amber-800 mb-4">
+          {t('trash_info')}
+        </div>
+      )}
+
       {loading ? (
         <div className="text-center py-12 text-gray-400">{t('loading')}</div>
       ) : filtered.length === 0 ? (
-        <div className="card px-5 py-12 text-center text-gray-400">{t('no_customers')}</div>
+        <div className="card px-5 py-12 text-center text-gray-400">
+          {showTrash ? t('trash_empty') : t('no_customers')}
+        </div>
       ) : (
         <div className="card overflow-hidden">
           <div className="overflow-x-auto">
@@ -67,6 +103,7 @@ export default function CustomersPage() {
                   <th className="px-5 py-3">{t('name')}</th>
                   <th className="px-5 py-3">{t('phone')}</th>
                   <th className="px-5 py-3">{t('email')}</th>
+                  {showTrash && <th className="px-5 py-3">{t('deleted_at')}</th>}
                   <th className="px-5 py-3 text-right">{t('actions')}</th>
                 </tr>
               </thead>
@@ -76,9 +113,19 @@ export default function CustomersPage() {
                     <td className="px-5 py-3 font-medium text-gray-900">{c.name}</td>
                     <td className="px-5 py-3 text-gray-600">{c.phone_primary}{c.phone_secondary && <span className="text-gray-400 ml-2">/ {c.phone_secondary}</span>}</td>
                     <td className="px-5 py-3 text-gray-600">{c.email}</td>
+                    {showTrash && <td className="px-5 py-3 text-gray-500 text-xs">{c.deleted_at?.split('T')[0]}</td>}
                     <td className="px-5 py-3 text-right">
-                      <button className="btn-secondary btn-sm mr-2" onClick={() => openEdit(c)}>{t('edit')}</button>
-                      <button className="btn-danger btn-sm" onClick={() => handleDelete(c.id)}>{t('delete')}</button>
+                      {showTrash ? (
+                        <div className="space-x-2">
+                          <button className="btn-primary btn-sm" onClick={() => handleRestore(c.id)}>♻️ {t('restore')}</button>
+                          <button className="btn-danger btn-sm" onClick={() => handlePermanentDelete(c.id)}>{t('delete_forever')}</button>
+                        </div>
+                      ) : (
+                        <div className="space-x-2">
+                          <button className="btn-secondary btn-sm" onClick={() => openEdit(c)}>{t('edit')}</button>
+                          <button className="btn-danger btn-sm" onClick={() => handleDelete(c.id)}>{t('delete')}</button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -87,6 +134,7 @@ export default function CustomersPage() {
           </div>
         </div>
       )}
+
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? t('edit_customer') : t('new_customer')}>
         <div className="space-y-4">
           <div>

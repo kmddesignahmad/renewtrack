@@ -46,7 +46,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     let html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: #1e3a8a; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
-          <h1 style="margin:0; font-size: 20px;">🔔 RenewTrack - Renewal Alert</h1>
+          <h1 style="margin:0; font-size: 20px;">🔔 RenewDCV - Renewal Alert</h1>
           <p style="margin: 5px 0 0; opacity: 0.8; font-size: 14px;">Date: ${today}</p>
         </div>
         <div style="background: white; padding: 20px; border: 1px solid #e5e7eb; border-radius: 0 0 8px 8px;">
@@ -98,7 +98,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     html += `
           <p style="color: #6b7280; font-size: 12px; margin-top: 20px; padding-top: 15px; border-top: 1px solid #e5e7eb;">
-            This is an automated notification from RenewTrack.<br>
+            This is an automated notification from RenewDCV.<br>
             Digital Creative Vision For Information Technology | Jordan – Amman
           </p>
         </div>
@@ -112,9 +112,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'RenewTrack <notify@dcv.jo>',
+        from: 'RenewDCV <notify@dcv.jo>',
         to: [ADMIN_EMAIL],
-        subject: `🔔 RenewTrack Alert: ${expired.length} expired, ${dueSoon.length} due soon`,
+        subject: `🔔 RenewDCV Alert: ${expired.length} expired, ${dueSoon.length} due soon`,
         html: html,
       }),
     });

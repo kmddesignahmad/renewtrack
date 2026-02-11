@@ -1,15 +1,22 @@
 import { json, error, requireAuth } from '../_lib';
 import type { Env } from '../_lib';
 
-// GET /api/customers
+// GET /api/customers?trash=1 for trash, default active only
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const auth = requireAuth(context.request);
   if (!auth.valid) return error('Unauthorized', 401);
 
   const db = context.env.DB;
+  const url = new URL(context.request.url);
+  const showTrash = url.searchParams.get('trash') === '1';
 
   try {
-    const result = await db.prepare('SELECT * FROM customers ORDER BY name ASC').all();
+    let result;
+    if (showTrash) {
+      result = await db.prepare('SELECT * FROM customers WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC').all();
+    } else {
+      result = await db.prepare('SELECT * FROM customers WHERE deleted_at IS NULL ORDER BY name ASC').all();
+    }
     return json(result.results || []);
   } catch (e: any) {
     return error('Failed to fetch customers: ' + e.message, 500);
@@ -41,20 +48,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         `INSERT INTO customers (name, phone_primary, phone_secondary, email, notes)
          VALUES (?, ?, ?, ?, ?)`
       )
-      .bind(
-        body.name.trim(),
-        body.phone_primary || '',
-        body.phone_secondary || '',
-        body.email || '',
-        body.notes || ''
-      )
+      .bind(body.name.trim(), body.phone_primary || '', body.phone_secondary || '', body.email || '', body.notes || '')
       .run();
 
-    const customer = await db
-      .prepare('SELECT * FROM customers WHERE id = ?')
-      .bind(result.meta.last_row_id)
-      .first();
-
+    const customer = await db.prepare('SELECT * FROM customers WHERE id = ?').bind(result.meta.last_row_id).first();
     return json(customer, 201);
   } catch (e: any) {
     return error('Failed to create customer: ' + e.message, 500);

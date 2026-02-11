@@ -69,12 +69,17 @@ export const api = {
 
   // Customers
   getCustomers: () => request<any[]>('/customers'),
+  getTrashCustomers: () => request<any[]>('/customers?trash=1'),
   createCustomer: (data: any) =>
     request('/customers', { method: 'POST', body: JSON.stringify(data) }),
   updateCustomer: (id: number, data: any) =>
     request(`/customers/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteCustomer: (id: number) =>
     request(`/customers/${id}`, { method: 'DELETE' }),
+  permanentDeleteCustomer: (id: number) =>
+    request(`/customers/${id}?permanent=1`, { method: 'DELETE' }),
+  restoreCustomer: (id: number) =>
+    request(`/customers/${id}`, { method: 'PUT', body: JSON.stringify({ action: 'restore' }) }),
 
   // Services
   getServices: () => request<any[]>('/services'),
