@@ -33,6 +33,7 @@ export const onRequestPut: PagesFunction<Env, 'id'> = async (context) => {
       phone_secondary?: string;
       email?: string;
       notes?: string;
+      tags?: string;
       action?: string;
     };
 
@@ -49,10 +50,10 @@ export const onRequestPut: PagesFunction<Env, 'id'> = async (context) => {
 
     await db
       .prepare(
-        `UPDATE customers SET name = ?, phone_primary = ?, phone_secondary = ?, email = ?, notes = ?, updated_at = datetime('now')
+        `UPDATE customers SET name = ?, phone_primary = ?, phone_secondary = ?, email = ?, notes = ?, tags = ?, updated_at = datetime('now')
          WHERE id = ?`
       )
-      .bind(body.name.trim(), body.phone_primary || '', body.phone_secondary || '', body.email || '', body.notes || '', id)
+      .bind(body.name.trim(), body.phone_primary || '', body.phone_secondary || '', body.email || '', body.notes || '', body.tags || '', id)
       .run();
 
     const customer = await db.prepare('SELECT * FROM customers WHERE id = ?').bind(id).first();

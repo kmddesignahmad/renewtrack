@@ -21,7 +21,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     const result = await db
       .prepare(
         `SELECT s.*, c.name as customer_name, c.phone_primary, c.email as customer_email,
-                st.name as service_name
+                c.tags as customer_tags, st.name as service_name
          FROM subscriptions s
          JOIN customers c ON s.customer_id = c.id
          JOIN service_types st ON s.service_type_id = st.id

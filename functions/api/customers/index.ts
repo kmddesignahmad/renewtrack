@@ -37,6 +37,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       phone_secondary?: string;
       email?: string;
       notes?: string;
+      tags?: string;
     };
 
     if (!body.name || !body.name.trim()) {
@@ -45,10 +46,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const result = await db
       .prepare(
-        `INSERT INTO customers (name, phone_primary, phone_secondary, email, notes)
-         VALUES (?, ?, ?, ?, ?)`
+        `INSERT INTO customers (name, phone_primary, phone_secondary, email, notes, tags)
+         VALUES (?, ?, ?, ?, ?, ?)`
       )
-      .bind(body.name.trim(), body.phone_primary || '', body.phone_secondary || '', body.email || '', body.notes || '')
+      .bind(body.name.trim(), body.phone_primary || '', body.phone_secondary || '', body.email || '', body.notes || '', body.tags || '')
       .run();
 
     const customer = await db.prepare('SELECT * FROM customers WHERE id = ?').bind(result.meta.last_row_id).first();

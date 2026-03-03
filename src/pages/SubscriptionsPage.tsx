@@ -95,7 +95,7 @@ export default function SubscriptionsPage() {
   if (search) {
     const q = search.toLowerCase();
     filtered = filtered.filter((s) =>
-      s.customer_name?.toLowerCase().includes(q) || s.domain_or_service?.toLowerCase().includes(q) || s.service_name?.toLowerCase().includes(q)
+      s.customer_name?.toLowerCase().includes(q) || s.domain_or_service?.toLowerCase().includes(q) || s.service_name?.toLowerCase().includes(q) || (s.customer_tags || '').toLowerCase().includes(q)
     );
   }
   if (filterYear) filtered = filtered.filter((s) => s.end_date?.startsWith(filterYear));
@@ -204,7 +204,7 @@ export default function SubscriptionsPage() {
               <div className="flex gap-2">
                 <div className="flex-1">
                   <SearchableSelect
-                    options={customers.map((c) => ({ value: c.id, label: c.name }))}
+                    options={customers.map((c) => ({ value: c.id, label: c.name, tags: c.tags || '' }))}
                     value={form.customer_id}
                     onChange={(val) => setForm({ ...form, customer_id: val })}
                     placeholder={t('select_customer')}

@@ -71,6 +71,9 @@ export const translations = {
     delete_forever: 'Delete Forever',
     permanent_delete_confirm: 'Permanently delete this customer? This cannot be undone!',
     deleted_at: 'Deleted At',
+    tags: 'Search Tags',
+    tags_placeholder: 'e.g. old shop, north company, abu ahmad',
+    tags_help: 'Press Enter to add a tag. Not visible to customer.',
 
     // Services
     services_title: 'Service Types',
@@ -277,6 +280,9 @@ export const translations = {
     delete_forever: 'حذف نهائي',
     permanent_delete_confirm: 'حذف هذا العميل نهائياً؟ لا يمكن التراجع!',
     deleted_at: 'تاريخ الحذف',
+    tags: 'كلمات البحث',
+    tags_placeholder: 'مثال: المحل القديم, شركة الشمال, أبو أحمد',
+    tags_help: 'اضغط Enter لإضافة كلمة. لا تظهر للعميل.',
 
     // Services
     services_title: 'أنواع الخدمات',

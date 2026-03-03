@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import { useLang } from '../lib/LangContext';
 import Modal from '../components/Modal';
+import TagInput from '../components/TagInput';
 
-interface Customer { id: number; name: string; phone_primary: string; phone_secondary: string; email: string; notes: string; deleted_at?: string; }
-const empty = { name: '', phone_primary: '', phone_secondary: '', email: '', notes: '' };
+interface Customer { id: number; name: string; phone_primary: string; phone_secondary: string; email: string; notes: string; tags: string; deleted_at?: string; }
+const empty = { name: '', phone_primary: '', phone_secondary: '', email: '', notes: '', tags: '' };
 
 export default function CustomersPage() {
   const { t } = useLang();
@@ -30,7 +31,7 @@ export default function CustomersPage() {
   useEffect(() => { load(); }, []);
 
   const openNew = () => { setEditing(null); setForm(empty); setErr(''); setModalOpen(true); };
-  const openEdit = (c: Customer) => { setEditing(c); setForm(c); setErr(''); setModalOpen(true); };
+  const openEdit = (c: Customer) => { setEditing(c); setForm({ name: c.name, phone_primary: c.phone_primary, phone_secondary: c.phone_secondary, email: c.email, notes: c.notes, tags: c.tags || '' }); setErr(''); setModalOpen(true); };
 
   const handleSave = async () => {
     if (!form.name.trim()) { setErr(t('name_required')); return; }
@@ -57,11 +58,28 @@ export default function CustomersPage() {
     try { await api.permanentDeleteCustomer(id); load(); } catch (ex: any) { alert(ex.message); }
   };
 
-  const filtered = (showTrash ? trashCustomers : customers).filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.email?.toLowerCase().includes(search.toLowerCase()) ||
-    c.phone_primary?.includes(search)
-  );
+  const filtered = (showTrash ? trashCustomers : customers).filter((c) => {
+    const q = search.toLowerCase();
+    return c.name.toLowerCase().includes(q) ||
+      c.email?.toLowerCase().includes(q) ||
+      c.phone_primary?.includes(q) ||
+      (c.tags || '').toLowerCase().includes(q);
+  });
+
+  const renderTags = (tags: string) => {
+    if (!tags) return null;
+    const tagList = tags.split(',').map(t => t.trim()).filter(Boolean);
+    if (tagList.length === 0) return null;
+    return (
+      <div className="flex flex-wrap gap-1 mt-1">
+        {tagList.map((tag, i) => (
+          <span key={i} className="inline-flex items-center rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-medium text-brand-700 ring-1 ring-brand-200">
+            {tag}
+          </span>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -110,7 +128,10 @@ export default function CustomersPage() {
               <tbody className="divide-y divide-gray-50">
                 {filtered.map((c) => (
                   <tr key={c.id} className="hover:bg-gray-50/50">
-                    <td className="px-5 py-3 font-medium text-gray-900">{c.name}</td>
+                    <td className="px-5 py-3">
+                      <div className="font-medium text-gray-900">{c.name}</div>
+                      {renderTags(c.tags)}
+                    </td>
                     <td className="px-5 py-3 text-gray-600">{c.phone_primary}{c.phone_secondary && <span className="text-gray-400 ml-2">/ {c.phone_secondary}</span>}</td>
                     <td className="px-5 py-3 text-gray-600">{c.email}</td>
                     {showTrash && <td className="px-5 py-3 text-gray-500 text-xs">{c.deleted_at?.split('T')[0]}</td>}
@@ -146,6 +167,11 @@ export default function CustomersPage() {
             <div><label className="label">{t('phone_secondary')}</label><input className="input" value={form.phone_secondary} onChange={(e) => setForm({ ...form, phone_secondary: e.target.value })} /></div>
           </div>
           <div><label className="label">{t('email')}</label><input className="input" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
+          <div>
+            <label className="label">{t('tags')}</label>
+            <TagInput value={form.tags} onChange={(val) => setForm({ ...form, tags: val })} placeholder={t('tags_placeholder')} />
+            <p className="text-xs text-gray-400 mt-1">{t('tags_help')}</p>
+          </div>
           <div><label className="label">{t('notes')}</label><textarea className="input" rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></div>
           {err && <div className="bg-red-50 text-red-600 text-sm px-3 py-2 rounded-lg">{err}</div>}
           <div className="flex justify-end gap-3 pt-2">
