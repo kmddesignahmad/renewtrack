@@ -113,6 +113,7 @@ export const translations = {
     service_required: 'Select a service',
     domain_required: 'Domain/service name is required',
     end_date_required: 'End date is required',
+    one_year: '1 Year',
     delete_sub_confirm: 'Delete this subscription?',
 
     // Renewals
@@ -318,6 +319,7 @@ export const translations = {
     service_required: 'اختر خدمة',
     domain_required: 'اسم الدومين/الخدمة مطلوب',
     end_date_required: 'تاريخ الانتهاء مطلوب',
+    one_year: 'سنة',
     delete_sub_confirm: 'حذف هذا الاشتراك؟',
 
     // Renewals

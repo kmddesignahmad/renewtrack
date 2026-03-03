@@ -228,8 +228,32 @@ export default function SubscriptionsPage() {
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><label className="label">{t('start_date')}</label><input className="input" type="date" value={form.start_date} onChange={(e) => setForm({ ...form, start_date: e.target.value })} /></div>
-            <div><label className="label">{t('end_date')} *</label><input className="input" type="date" value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} /></div>
+            <div>
+              <label className="label">{t('start_date')}</label>
+              <input className="input" type="date" value={form.start_date} onChange={(e) => {
+                setForm({ ...form, start_date: e.target.value });
+              }} />
+            </div>
+            <div>
+              <label className="label">{t('end_date')} *</label>
+              <div className="flex gap-2">
+                <input className="input" type="date" value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} />
+                <button
+                  type="button"
+                  className="btn-secondary btn-sm whitespace-nowrap"
+                  onClick={() => {
+                    if (form.start_date) {
+                      const d = new Date(form.start_date);
+                      d.setFullYear(d.getFullYear() + 1);
+                      setForm({ ...form, end_date: d.toISOString().split('T')[0] });
+                    }
+                  }}
+                  title={t('one_year')}
+                >
+                  📅 {t('one_year')}
+                </button>
+              </div>
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div><label className="label">{t('price')}</label><input className="input" type="number" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="0.00" /></div>
