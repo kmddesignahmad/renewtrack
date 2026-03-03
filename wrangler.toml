@@ -5,3 +5,4 @@ pages_build_output_dir = "dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "renewtrack_db"
+database_id = "23471d9f-6b2f-47ad-81c7-80f07e615800"
